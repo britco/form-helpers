@@ -21,3 +21,18 @@ Inspiration
 
 ## Dependencies
 * https://github.com/naugtur/insertionQuery
+
+## Development
+CD to root
+
+Install packages:
+
+````
+sudo npm install
+````
+
+Watch for changes
+
+````
+grunt watch
+````
