@@ -176,7 +176,7 @@ $(document).ready(function() {
 		}
 
 		// Trigger plugin on existing <selects> and new ones that get added
-		$(selector).on('everyInsert', function() { $(this).selectify(); });
+		$(document).on('everyInsert', selector, function() { $(this).selectify(); });
 
 	}(jQuery));
 });

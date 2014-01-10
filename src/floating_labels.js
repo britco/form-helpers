@@ -42,7 +42,7 @@ $(document).ready(function(){
 	var selector = 'input[placeholder]:not([type=submit]):not([type=checkbox]),textarea[placeholder]';
 
 	// Setup functionality on all inputs (existing and new)
-	$(selector).on('everyInsert', function() {
+	$(document).on('everyInsert', selector, function() {
 		updatePlaceholder.call(this);
 	});
 
