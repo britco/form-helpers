@@ -14,12 +14,11 @@ Combines the best of all solutions:
 Inspiration
 * http://codepen.io/lbebber/pen/uEHzD
 
-## Download
-[form-helpers-0.1.6.js](https://raw2.github.com/britco/form-helpers/master/dist/form-helpers-0.1.6.js)
-
-
 ## Fancy dropdowns
 * Custom styled dropdowns
+
+## Download
+[form-helpers-0.1.6.js](https://raw2.github.com/britco/form-helpers/master/dist/form-helpers-0.1.6.js)
 
 ## Dependencies
 * https://github.com/britco/everyInsert
