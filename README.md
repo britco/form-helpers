@@ -20,7 +20,7 @@ Inspiration
 
 
 ## Dependencies
-* https://github.com/naugtur/insertionQuery
+* https://github.com/britco/everyInsert
 
 ## Development
 CD to root
