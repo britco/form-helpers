@@ -16,7 +16,7 @@ Inspiration
 
 
 ## Fancy dropdowns
-* Custom styled dropdowns that work with existing elements and elements that get added to the page
+* Custom styled dropdowns
 
 
 ## Dependencies
