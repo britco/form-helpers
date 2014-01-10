@@ -4,19 +4,9 @@ $(document).ready(function(){
 
 		var parent = $(this).parents('.input').first();
 
-		var val = input.val();
 
-		window.setTimeout(function() {
-			if (val!=="") {
-				parent.addClass('label-float-show');
-			} else {
-				parent.removeClass('label-float-show');
-			}
-		}, 1);
-	};
-
-	var addFocusClass = function() {
-		// Attach a label if there is not one already
+		// Attach a label if there is not one already (won't show until label-
+		// float-show class is added)
 		var nearby_labels = $(this).siblings('label');
 
 		if(!nearby_labels.length) {
@@ -24,6 +14,20 @@ $(document).ready(function(){
 			$(this).before('<label>' + placeholder + '</label>');
 		}
 
+		window.setTimeout(function() {
+			// If value is filled in, or autofill is on, show label
+			var val = input.val();
+			var autofilled = $(input).filter(':-webkit-autofill').length;
+
+			if (val !== "" || autofilled === true) {
+				parent.addClass('label-float-show');
+			} else {
+				parent.removeClass('label-float-show');
+			}
+		}, 10);
+	};
+
+	var addFocusClass = function() {
 		var parent = $(this).parents('.input').first();
 
 		parent.addClass('input-focus');
@@ -37,11 +41,13 @@ $(document).ready(function(){
 
 	var selector = 'input[placeholder]:not([type=submit]):not([type=checkbox]),textarea[placeholder]';
 
-	$('body').on('keydown', selector, updatePlaceholder);
+	// Setup functionality on all inputs (existing and new)
+	$(selector).on('everyInsert', function() {
+		updatePlaceholder.call(this);
+	});
 
-	$('body').on('keyup', selector, updatePlaceholder);
-
+	// Update placeholders on events
+	$('body').on('keydown keyup', selector, updatePlaceholder);
 	$('body').on('focus', selector, addFocusClass);
-
 	$('body').on('blur', selector, removeFocusClass);
 });

@@ -9,7 +9,7 @@ module.exports = (grunt) ->
 		pkg: pkg
 		concat:
 			dist:
-				src: ['src/*.js', 'src/**/*.js']
+				src: ['src/global.js', 'src/*.js', 'src/**/*.js']
 		uglify:
 			options:
 				mangle: false

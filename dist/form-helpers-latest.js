@@ -179,18 +179,99 @@ $(document).ready(function() {
 	$(selector).selectify();
 
 	// Trigger plugin on new selects that get added
-	// insertionQ(parentSelector).summary(function(nodes) {
-	// 	console.log('nodes', nodes);
-	// 	$.each(nodes, function(i,node) {
-	// 		if($(node).length) {
-	// 			// Now loop over the selects, since the command
-	// 			// is run on .input.input-select
-	// 			$(node).find('select').each(function(i,e) {
-	// 				if(e.length) {
-	// 					$(e).selectify();
-	// 				}
-	// 			});
-	// 		}
-	// 	});
-	// });
+	insertionQ(parentSelector).summary(function(nodes) {
+		$.each(nodes, function(i,node) {
+			if($(node).length) {
+				// Now loop over the selects, since the command
+				// is run on .input.input-select
+				$(node).find('select').each(function(i,e) {
+					if(e.length) {
+						$(e).selectify();
+					}
+				});
+			}
+		});
+	});
 });
+$(document).ready(function(){
+	var updatePlaceholder = function() {
+		console.log('foundel', this);
+		var input = $(this);
+
+		var parent = $(this).parents('.input').first();
+
+		var val = input.val();
+
+		// Attach a label if there is not one already (won't show until label-
+		// float-show class is added)
+		var nearby_labels = $(this).siblings('label');
+
+		if(!nearby_labels.length) {
+			placeholder = $(this).attr('placeholder');
+			$(this).before('<label>' + placeholder + '</label>');
+		}
+
+		window.setTimeout(function() {
+			if (val!=="") {
+				parent.addClass('label-float-show');
+			} else {
+				parent.removeClass('label-float-show');
+			}
+		}, 1);
+	};
+
+	var addFocusClass = function() {
+		var parent = $(this).parents('.input').first();
+
+		parent.addClass('input-focus');
+	};
+
+	var removeFocusClass = function() {
+		var parent = $(this).parents('.input').first();
+
+		parent.removeClass('input-focus');
+	};
+
+	var selector = 'input[placeholder]:not([type=submit]):not([type=checkbox]),textarea[placeholder]';
+
+	// Update the placeholders to start
+	$(selector).each(function() { updatePlaceholder.call(this); });
+
+	// Setup functionality on new inputs
+	$(selector).on('everyInsert', function() {
+		console.log('test', this);
+	});
+
+	// Update placeholders on events
+	$('body').on('keydown', selector, updatePlaceholder);
+
+	$('body').on('keyup', selector, updatePlaceholder);
+
+	$('body').on('focus', selector, addFocusClass);
+
+	$('body').on('blur', selector, removeFocusClass);
+});
+(function($){
+	// Remove event
+	$.event.special.destroyed = {
+		remove: function(o) {
+			if (o.handler && o.type === 'destroyed') {
+				o.handler(o);
+			}
+		}
+	};
+
+	// `Element added` event
+	$.event.special.everyInsert = {
+		setup: function(data, namespaces, eventHandle) {
+			insertionQ(selector).every(function(nodes) {
+				console.log('foundnodes', nodes);
+				console.log('eventHandle', eventHandle);
+			});
+		},
+		remove: function(o) {
+
+		}
+	};
+
+}(jQuery));
