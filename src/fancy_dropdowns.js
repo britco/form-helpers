@@ -22,15 +22,6 @@ $(document).ready(function() {
 	};
 
 	(function($){
-		// Remove event for divs
-		$.event.special.destroyed = {
-			remove: function(o) {
-				if (o.handler && o.type === 'destroyed') {
-					o.handler(o);
-				}
-			}
-		};
-
 		// Plugin
 		$.fn.selectify = function() {
 			this.each(function () {
