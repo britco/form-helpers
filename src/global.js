@@ -56,12 +56,6 @@
 					handleObj.handler.call(node);
 				});
 			}
-		},
-		setup: function(data, namespaces, eventHandle) {
-
-		},
-		remove: function(o) {
-
 		}
 	};
 

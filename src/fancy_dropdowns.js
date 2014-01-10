@@ -24,6 +24,7 @@ $(document).ready(function() {
 	(function($){
 		// Plugin
 		$.fn.selectify = function() {
+			// Loop through all elements in jQ obj.
 			this.each(function () {
 				// Only run once
 				if($.inArray($(this)[0],selectified) !== -1) {
@@ -173,24 +174,9 @@ $(document).ready(function() {
 			// Update status
 			data.status = 'closed';
 		}
+
+		// Trigger plugin on existing <selects> and new ones that get added
+		$(selector).on('everyInsert', function() { $(this).selectify(); });
+
 	}(jQuery));
-
-	// Trigger plugin on existing selects
-	$(selector).selectify();
-
-	// Trigger plugin on new selects that get added
-	// insertionQ(parentSelector).summary(function(nodes) {
-	// 	console.log('nodes', nodes);
-	// 	$.each(nodes, function(i,node) {
-	// 		if($(node).length) {
-	// 			// Now loop over the selects, since the command
-	// 			// is run on .input.input-select
-	// 			$(node).find('select').each(function(i,e) {
-	// 				if(e.length) {
-	// 					$(e).selectify();
-	// 				}
-	// 			});
-	// 		}
-	// 	});
-	// });
 });
