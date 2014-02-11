@@ -71,6 +71,7 @@
                     html += "</ul>";
                     html += "</div>";
                     $parent.append(html);
+                    ctx.$wrapper = $(".select-wrapper", $parent);
                     ctx.$active = $(".select-active", $parent);
                     ctx.$options = $(".select-options", $parent);
                     var ns = ".ns_select_" + uniqid;
@@ -116,10 +117,14 @@
             }
             function selectOpen(data) {
                 data.$options.show();
+                $(data.$wrapper).addClass("select-wrapper-open");
+                $(data.$active).addClass("select-wrapper-open");
                 data.status = "opened";
             }
             function selectClose(data) {
                 data.$options.hide();
+                $(data.$wrapper).removeClass("select-wrapper-open");
+                $(data.$active).removeClass("select-wrapper-open");
                 data.status = "closed";
             }
             $(document).on("everyInsert", selector, function() {

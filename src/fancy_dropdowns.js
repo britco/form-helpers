@@ -89,6 +89,7 @@ $(document).ready(function() {
 				$parent.append(html);
 
 				// Add more data
+				ctx.$wrapper = $('.select-wrapper', $parent);
 				ctx.$active = $('.select-active', $parent);
 				ctx.$options = $('.select-options', $parent);
 
@@ -163,6 +164,9 @@ $(document).ready(function() {
 		function selectOpen(data) {
 			data.$options.show();
 
+			$(data.$wrapper).addClass('select-wrapper-open');
+			$(data.$active).addClass('select-wrapper-open');
+
 			// Update status
 			data.status = 'opened';
 		}
@@ -170,6 +174,9 @@ $(document).ready(function() {
 		// Close menu
 		function selectClose(data) {
 			data.$options.hide();
+
+			$(data.$wrapper).removeClass('select-wrapper-open');
+			$(data.$active).removeClass('select-wrapper-open');
 
 			// Update status
 			data.status = 'closed';
