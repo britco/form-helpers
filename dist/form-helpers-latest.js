@@ -81,7 +81,7 @@ $(document).ready(function() {
 				html += label + '</div>';
 
 				// Options
-				html += '<ul class="select-options">';
+				html += '<ul class="select-options dropdown-options">';
 
 				$.each(options, function(i,option) {
 					var $option = $(option);

@@ -61,7 +61,7 @@
                     html += 'data-value="' + value + '"';
                     html += 'data-label="' + label + '">';
                     html += label + "</div>";
-                    html += '<ul class="select-options">';
+                    html += '<ul class="select-options dropdown-options">';
                     $.each(options, function(i, option) {
                         var $option = $(option);
                         var value = $option.attr("value");
