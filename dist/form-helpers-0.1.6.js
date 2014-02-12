@@ -159,7 +159,7 @@
             var parent = $(this).parents(".input").first();
             parent.removeClass("input-focus");
         };
-        var selector = "input[placeholder]:not([type=submit]):not([type=checkbox]),textarea[placeholder]";
+        var selector = "input[placeholder]:not([type=submit]):not([type=checkbox]):not(.label-static),textarea[placeholder]";
         $(document).on("everyInsert", selector, function() {
             updatePlaceholder.call(this);
         });

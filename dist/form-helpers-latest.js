@@ -238,7 +238,7 @@ $(document).ready(function(){
 		parent.removeClass('input-focus');
 	};
 
-	var selector = 'input[placeholder]:not([type=submit]):not([type=checkbox]),textarea[placeholder]';
+	var selector = 'input[placeholder]:not([type=submit]):not([type=checkbox]):not(.label-static),textarea[placeholder]';
 
 	// Setup functionality on all inputs (existing and new)
 	$(document).on('everyInsert', selector, function() {
