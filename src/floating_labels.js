@@ -42,9 +42,9 @@ $(document).ready(function(){
 	var selectors = [];
 
 	var parents = [
-		'form:not([data-floating-labels="off"]) .input',
-		'.input.label-float',
-		'.input[data-label-float="on"]'
+	'form:not([data-floating-labels="off"]) .input:not([data-floating-labels="off"])',
+	'.input.label-float:not([data-floating-labels="off"])',
+	'.input[data-label-float="on"]:not([data-floating-labels="off"])'
 	];
 	for(var i in parents) {
 		var parent = parents[i] + " ";
