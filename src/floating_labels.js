@@ -1,5 +1,4 @@
 $(document).ready(function(){
-	var _input = document.createElement("input");
 	var autofill_mode = false;
 	try {
 		$(':-webkit-autofill').first();
