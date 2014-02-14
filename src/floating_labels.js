@@ -39,7 +39,14 @@ $(document).ready(function(){
 		parent.removeClass('input-focus');
 	};
 
-	var selector = '*:not(.label-static) > input[placeholder]:not([type=submit]):not([type=checkbox]),textarea[placeholder]';
+	var parent = 'form:not([label-float="off"]) ';
+	var selectors = [];
+	selectors.push(parent + "input[placeholder]:not([type=submit]):not([type=checkbox])");
+	selectors.push(parent + "textarea[placeholder]");
+	selectors.push('.input.label-float');
+	selectors.push('.input[label-float="on"]');
+
+	selector = selectors.join(', ');
 
 	// Setup functionality on all inputs (existing and new)
 	$(document).on('everyInsert', selector, function() {
