@@ -39,17 +39,17 @@ $(document).ready(function(){
 		parent.removeClass('input-focus');
 	};
 
-	var parent = 'form:not([label-float="off"]) ';
+	var parent = 'form:not([data-label-float="off"]) ';
 	var selectors = [];
 	selectors.push(parent + "input[placeholder]:not([type=submit]):not([type=checkbox])");
 	selectors.push(parent + "textarea[placeholder]");
 	selectors.push('.input.label-float');
-	selectors.push('.input[label-float="on"]');
+	selectors.push('.input[data-label-float="on"]');
 
 	selector = selectors.join(', ');
 
 	// Setup functionality on all inputs (existing and new)
-	$(document).on('everyInsert', selector, function() {
+	$(document).on('everyinsert', selector, function() {
 		updatePlaceholder.call(this);
 	});
 
