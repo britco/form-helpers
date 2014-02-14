@@ -1,4 +1,13 @@
 $(document).ready(function(){
+	var _input = document.createElement("input");
+	var autofill_mode = false;
+	try {
+		$(':-webkit-autofill').first();
+		autofill_mode = 'webkit';
+	} catch(_error) {
+		var autofill_mode = false;
+	}
+
 	var updatePlaceholder = function() {
 		var input = $(this);
 
@@ -17,7 +26,8 @@ $(document).ready(function(){
 		window.setTimeout(function() {
 			// If value is filled in, or autofill is on, show label
 			var val = input.val();
-			var autofilled = $(input).filter(':-webkit-autofill').length;
+
+			var autofilled = autofill_mode === 'webkit' && $(input).filter(':-webkit-autofill').length;
 
 			if (val !== "" || autofilled === true) {
 				parent.addClass('label-float-show');

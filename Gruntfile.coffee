@@ -29,7 +29,7 @@ module.exports = (grunt) ->
 				src: ['<%= pkg.distDirectory %>/<%= pkg.name %>-latest.js']
 				dest: '<%= pkg.distDirectory %>/<%= pkg.name %>-<%= pkg.version %>.js'
 		watch:
-			files: ['src/*.js']
+			files: ['src/*.js', 'src/**.js']
 			tasks: ['concat']
 
 	# Dev / prod toggles
