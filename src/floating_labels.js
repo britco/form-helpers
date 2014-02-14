@@ -39,12 +39,18 @@ $(document).ready(function(){
 		parent.removeClass('input-focus');
 	};
 
-	var parent = 'form:not([data-label-float="off"]) ';
 	var selectors = [];
-	selectors.push(parent + "input[placeholder]:not([type=submit]):not([type=checkbox])");
-	selectors.push(parent + "textarea[placeholder]");
-	selectors.push('.input.label-float');
-	selectors.push('.input[data-label-float="on"]');
+
+	var parents = [
+		'form:not([data-floating-labels="off"]) .input',
+		'.input.label-float',
+		'.input[data-label-float="on"]'
+	];
+	for(var i in parents) {
+		var parent = parents[i] + " ";
+		selectors.push(parent + "input[placeholder]:not([type=submit]):not([type=checkbox])");
+		selectors.push(parent + "textarea[placeholder]");
+	}
 
 	selector = selectors.join(', ');
 
