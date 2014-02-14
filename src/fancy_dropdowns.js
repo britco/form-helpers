@@ -1,7 +1,7 @@
 $(document).ready(function() {
 	// Global
 	var parentSelector = '.input.input-select';
-	var selector = '.input.input-select select';
+	var selector = '.input.input-select:not([data-fancy-dropdowns="off"]) select';
 	var ids = [];
 	var selectified = [];
 
@@ -141,6 +141,7 @@ $(document).ready(function() {
 		function selectUpdateValue(data,label,value) {
 			// Update original select
 			data.$select.val(value);
+			data.$select.trigger('change');
 
 			// Update label
 			data.$active.attr('data-label',label);
