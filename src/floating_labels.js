@@ -1,4 +1,12 @@
 $(document).ready(function(){
+	// If placeholders aren't supported, don't even continue, since this lib
+	// will mess with placeholder shiv libraries like jquery.placeholder
+	var isOperaMini = Object.prototype.toString.call(window.operamini) == '[object OperaMini]';
+	var isInputSupported = 'placeholder' in document.createElement('input') && !isOperaMini;
+	if(!isInputSupported) {
+		return;
+	}
+
 	var autofill_mode = false;
 	try {
 		$(':-webkit-autofill').first();
@@ -11,7 +19,6 @@ $(document).ready(function(){
 		var input = $(this);
 
 		var parent = $(this).parents('.input').first();
-
 
 		// Attach a label if there is not one already (won't show until label-
 		// float-show class is added)
