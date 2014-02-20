@@ -39,4 +39,4 @@ grunt watch
 ````
 
 ## License
-form-helpers is available under the [MIT License](LICENSE.md).
+Available under the [MIT License](LICENSE.md).
