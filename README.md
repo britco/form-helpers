@@ -21,10 +21,10 @@ Inspiration
 ### Configure:
 ````
 window.FormHelpers = {
-	    	FancyDropdowns: {
-	    		selector: 'select'
-	    	}
-	    };
+	FancyDropdowns: {
+		selector: 'select'
+	}
+};
 ````
 
 ## Download
