@@ -32,6 +32,7 @@ window.FormHelpers = {
 ````
 window.FormHelpers = {
 	FancyDropdowns: {
+		enabled: true,
 		selector: '.input.input-select:not([data-fancy-dropdowns="off"]) select'
 	}
 };
