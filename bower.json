@@ -1,11 +1,11 @@
 {
   "name": "form-helpers",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "homepage": "https://github.com/britco/form-helpers",
   "authors": [
     "Paul Dufour <paul@brit.co>"
   ],
-  "main": "dist/form-helpers-0.1.7.js",
+  "main": "dist/form-helpers-0.1.8.js",
   "license": "MIT",
   "ignore": [
     "**/.*",

@@ -47,6 +47,11 @@
         var ids = [];
         var selectified = [];
         (function($) {
+            $("select").each(function() {
+                if (!$(this).parents(".input").length) {
+                    $(this).wrap('<div class="input input-select" />');
+                }
+            });
             $.fn.selectify = function() {
                 this.each(function() {
                     if ($.inArray($(this)[0], selectified) !== -1) {

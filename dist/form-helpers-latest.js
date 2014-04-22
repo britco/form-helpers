@@ -58,6 +58,13 @@ $(document).ready(function() {
 	// $('body').after('<div class="input input-select"><select><option value="volvo">Volvo</option></select></div>');
 
 	(function($){
+		// Wrap all existing selects in <div class="input input-select">..</div>
+		$('select').each(function() {
+			if(!$(this).parents('.input').length) {
+				$(this).wrap('<div class="input input-select" />');
+			}
+		});
+
 		// Plugin
 		$.fn.selectify = function() {
 			// Loop through all elements in jQ obj.
