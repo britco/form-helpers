@@ -22,7 +22,7 @@ Inspiration
 ````
 window.FormHelpers = {
 	    	FancyDropdowns: {
-	    		'selector': 'select'
+	    		selector: 'select'
 	    	}
 	    };
 ````
