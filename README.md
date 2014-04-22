@@ -14,8 +14,29 @@ Combines the best of all solutions:
 Inspiration
 * http://codepen.io/lbebber/pen/uEHzD
 
+
+### Configure:
+````
+window.FormHelpers = {
+	FloatingLabels: {
+		enabled: true
+	}
+};
+````
+
 ## Fancy dropdowns
 * Custom styled dropdowns
+
+
+### Configure:
+````
+window.FormHelpers = {
+	FancyDropdowns: {
+		enabled: true,
+		selector: '.input.input-select:not([data-fancy-dropdowns="off"]) select'
+	}
+};
+````
 
 ## Download
 [form-helpers-0.1.6.js](https://raw2.github.com/britco/form-helpers/master/dist/form-helpers-0.1.6.js)
