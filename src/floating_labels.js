@@ -1,4 +1,30 @@
 $(document).ready(function(){
+	var defaults = function(dest,source) {
+		for(var k in source) {
+			if(dest[k] === void 0) {
+				dest[k] = source[k];
+			}
+
+			return dest;
+		}
+	};
+
+	// Config
+	var defaultConfig = {
+		enabled: true
+	};
+
+	window.FormHelpers = window.FormHelpers || {};
+	window.FormHelpers.FloatingLabels = window.FormHelpers.FloatingLabels || {};
+	config = defaults(window.FormHelpers.FloatingLabels,defaultConfig);
+
+	// If plugin is not enabled, don't continue
+	if(window.FormHelpers.FloatingLabels.enabled === false) {
+		return;
+	}
+
+	console.log('floating-labels-on');
+
 	// If placeholders aren't supported, don't even continue, since this lib
 	// will mess with placeholder shiv libraries like jquery.placeholder
 	var isOperaMini = Object.prototype.toString.call(window.operamini) == '[object OperaMini]';

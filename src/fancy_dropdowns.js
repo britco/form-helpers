@@ -1,16 +1,20 @@
 $(document).ready(function() {
 	// Global
-	var parentSelector = '.input.input-select';
-	var selector = '.input.input-select:not([data-fancy-dropdowns="off"]) select';
-	var ids = [];
-	var selectified = [];
 
-	// Example:
-	// $('body').after('<div class="input input-select"><select><option value="volvo">Volvo</option></select></div>');
+	// Functions
+	var defaults = function(dest,source) {
+		for(var k in source) {
+			if(dest[k] === void 0) {
+				dest[k] = source[k];
+			}
+
+			return dest;
+		}
+	};
 
 	// arrayRemove([1,2],1);
 	// See http://stackoverflow.com/a/3955096
-	arrayRemove = function(arr) {
+	var arrayRemove = function(arr) {
 		var what, a = Array.prototype.slice.call(arguments, 1), L = a.length, ax;
 		while (L && arr.length) {
 			what = a[--L];
@@ -20,6 +24,28 @@ $(document).ready(function() {
 		}
 		return arr;
 	};
+
+	// Config
+	var defaultConfig = {
+		selector: '.input.input-select:not([data-fancy-dropdowns="off"]) select',
+		enabled: true
+	};
+
+	window.FormHelpers = window.FormHelpers || {};
+	window.FormHelpers.FancyDropdowns = window.FormHelpers.FancyDropdowns || {};
+	config = defaults(window.FormHelpers.FancyDropdowns,defaultConfig);
+
+	// If plugin is not enabled, don't continue
+	if(window.FormHelpers.FancyDropdowns.enabled === false) {
+		return;
+	}
+
+	var selector = config.selector;
+	var ids = [];
+	var selectified = [];
+
+	// Example:
+	// $('body').after('<div class="input input-select"><select><option value="volvo">Volvo</option></select></div>');
 
 	(function($){
 		// Plugin
