@@ -10,17 +10,21 @@
 }(jQuery));
 $(document).ready(function() {
 	// Global
-	var parentSelector = '.input.input-select';
-	var selector = '.input.input-select select';
-	var ids = [];
-	var selectified = [];
 
-	// Example:
-	// $('body').after('<div class="input input-select"><select><option value="volvo">Volvo</option></select></div>');
+	// Functions
+	var defaults = function(dest,source) {
+		for(var k in source) {
+			if(dest[k] === void 0) {
+				dest[k] = source[k];
+			}
+
+			return dest;
+		}
+	};
 
 	// arrayRemove([1,2],1);
 	// See http://stackoverflow.com/a/3955096
-	arrayRemove = function(arr) {
+	var arrayRemove = function(arr) {
 		var what, a = Array.prototype.slice.call(arguments, 1), L = a.length, ax;
 		while (L && arr.length) {
 			what = a[--L];
@@ -30,6 +34,28 @@ $(document).ready(function() {
 		}
 		return arr;
 	};
+
+	// Config
+	var defaultConfig = {
+		selector: '.input.input-select:not([data-fancy-dropdowns="off"]) select',
+		enabled: true
+	};
+
+	window.FormHelpers = window.FormHelpers || {};
+	window.FormHelpers.FancyDropdowns = window.FormHelpers.FancyDropdowns || {};
+	config = defaults(window.FormHelpers.FancyDropdowns,defaultConfig);
+
+	// If plugin is not enabled, don't continue
+	if(window.FormHelpers.FancyDropdowns.enabled === false) {
+		return;
+	}
+
+	var selector = config.selector;
+	var ids = [];
+	var selectified = [];
+
+	// Example:
+	// $('body').after('<div class="input input-select"><select><option value="volvo">Volvo</option></select></div>');
 
 	(function($){
 		// Plugin
@@ -151,6 +177,7 @@ $(document).ready(function() {
 		function selectUpdateValue(data,label,value) {
 			// Update original select
 			data.$select.val(value);
+			data.$select.trigger('change');
 
 			// Update label
 			data.$active.attr('data-label',label);
@@ -193,16 +220,55 @@ $(document).ready(function() {
 		}
 
 		// Trigger plugin on existing <selects> and new ones that get added
-		$(document).on('everyInsert', selector, function() { $(this).selectify(); });
+		$(document).on('everyinsert', selector, function() { $(this).selectify(); });
 
 	}(jQuery));
 });
 $(document).ready(function(){
+	var defaults = function(dest,source) {
+		for(var k in source) {
+			if(dest[k] === void 0) {
+				dest[k] = source[k];
+			}
+
+			return dest;
+		}
+	};
+
+	// Config
+	var defaultConfig = {
+		enabled: true
+	};
+
+	window.FormHelpers = window.FormHelpers || {};
+	window.FormHelpers.FloatingLabels = window.FormHelpers.FloatingLabels || {};
+	config = defaults(window.FormHelpers.FloatingLabels,defaultConfig);
+
+	// If plugin is not enabled, don't continue
+	if(window.FormHelpers.FloatingLabels.enabled === false) {
+		return;
+	}
+
+	// If placeholders aren't supported, don't even continue, since this lib
+	// will mess with placeholder shiv libraries like jquery.placeholder
+	var isOperaMini = Object.prototype.toString.call(window.operamini) == '[object OperaMini]';
+	var isInputSupported = 'placeholder' in document.createElement('input') && !isOperaMini;
+	if(!isInputSupported) {
+		return;
+	}
+
+	var autofill_mode = false;
+	try {
+		$(':-webkit-autofill').first();
+		autofill_mode = 'webkit';
+	} catch(_error) {
+		var autofill_mode = false;
+	}
+
 	var updatePlaceholder = function() {
 		var input = $(this);
 
 		var parent = $(this).parents('.input').first();
-
 
 		// Attach a label if there is not one already (won't show until label-
 		// float-show class is added)
@@ -216,7 +282,8 @@ $(document).ready(function(){
 		window.setTimeout(function() {
 			// If value is filled in, or autofill is on, show label
 			var val = input.val();
-			var autofilled = $(input).filter(':-webkit-autofill').length;
+
+			var autofilled = autofill_mode === 'webkit' && $(input).filter(':-webkit-autofill').length;
 
 			if (val !== "" || autofilled === true) {
 				parent.addClass('label-float-show');
@@ -238,10 +305,23 @@ $(document).ready(function(){
 		parent.removeClass('input-focus');
 	};
 
-	var selector = 'input[placeholder]:not([type=submit]):not([type=checkbox]):not(.label-static),textarea[placeholder]';
+	var selectors = [];
+
+	var parents = [
+	'form:not([data-floating-labels="off"]) .input:not([data-floating-labels="off"])',
+	'.input.label-float:not([data-floating-labels="off"])',
+	'.input[data-label-float="on"]:not([data-floating-labels="off"])'
+	];
+	for(var i in parents) {
+		var parent = parents[i] + " ";
+		selectors.push(parent + "input[placeholder]:not([type=submit]):not([type=checkbox])");
+		selectors.push(parent + "textarea[placeholder]");
+	}
+
+	selector = selectors.join(', ');
 
 	// Setup functionality on all inputs (existing and new)
-	$(document).on('everyInsert', selector, function() {
+	$(document).on('everyinsert', selector, function() {
 		updatePlaceholder.call(this);
 	});
 

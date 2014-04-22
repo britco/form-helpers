@@ -23,8 +23,6 @@ $(document).ready(function(){
 		return;
 	}
 
-	console.log('floating-labels-on');
-
 	// If placeholders aren't supported, don't even continue, since this lib
 	// will mess with placeholder shiv libraries like jquery.placeholder
 	var isOperaMini = Object.prototype.toString.call(window.operamini) == '[object OperaMini]';
