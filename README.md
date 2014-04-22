@@ -19,7 +19,7 @@ Inspiration
 ````
 window.FormHelpers = {
 	FloatingLabels: {
-		enabled: false
+		enabled: true
 	}
 };
 ````
@@ -32,7 +32,7 @@ window.FormHelpers = {
 ````
 window.FormHelpers = {
 	FancyDropdowns: {
-		selector: 'select'
+		selector: '.input.input-select:not([data-fancy-dropdowns="off"]) select'
 	}
 };
 ````
