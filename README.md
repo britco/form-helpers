@@ -14,6 +14,16 @@ Combines the best of all solutions:
 Inspiration
 * http://codepen.io/lbebber/pen/uEHzD
 
+
+### Configure:
+````
+window.FormHelpers = {
+	FloatingLabels: {
+		enabled: false
+	}
+};
+````
+
 ## Fancy dropdowns
 * Custom styled dropdowns
 
