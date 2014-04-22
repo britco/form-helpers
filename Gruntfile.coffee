@@ -15,7 +15,6 @@ module.exports = (grunt) ->
 				mangle: false
 				compress: false
 				beautify: true
-				wrap: 'globals'
 				preserveComments: 'some'
 				banner: '''
 				/*!
@@ -30,7 +29,7 @@ module.exports = (grunt) ->
 				dest: '<%= pkg.distDirectory %>/<%= pkg.name %>-<%= pkg.version %>.js'
 		watch:
 			files: ['src/*.js', 'src/**.js']
-			tasks: ['concat']
+			tasks: ['concat','uglify']
 
 	# Dev / prod toggles
 	if process.env['DEV'] is 'true'
