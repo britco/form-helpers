@@ -48,7 +48,8 @@ $(document).ready(function() {
     (function($) {
         $("select").each(function() {
             if (!$(this).parents(".input").length) {
-                $(this).wrap('<div class="input input-select" />');
+                var selectClasses = $(this).attr("class");
+                $(this).wrap('<div class="input input-select ' + selectClasses + '" />');
             }
         });
         $.fn.selectify = function() {
@@ -95,6 +96,18 @@ $(document).ready(function() {
                 ctx.$wrapper = $(".select-wrapper", $parent);
                 ctx.$active = $(".select-active", $parent);
                 ctx.$options = $(".select-options", $parent);
+                var styleAttr = ctx.$options.attr("style") || "";
+                ctx.$options.css({
+                    position: "absolute",
+                    top: "-9999px",
+                    left: "-9999px",
+                    display: "block"
+                });
+                var minWidth = ctx.$options.outerWidth();
+                minWidth += ctx.$wrapper.css("border-left-width").replace(/px$,''/);
+                minWidth += ctx.$wrapper.css("border-right-width").replace(/px$,''/);
+                ctx.$wrapper.css("min-width", minWidth);
+                ctx.$options.attr("style", styleAttr);
                 var ns = ".ns_select_" + uniqid;
                 ctx.ns = ns;
                 $("body").on("click" + ns, ctx, bodyClicked);

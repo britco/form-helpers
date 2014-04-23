@@ -47,177 +47,196 @@ $(document).ready(function() {
 	// Example:
 	// $('body').after('<div class="input input-select"><select><option value="volvo">Volvo</option></select></div>');
 
-	(function($){
-		// Wrap all existing selects in <div class="input input-select">..</div>
-		$('select').each(function() {
-			if(!$(this).parents('.input').length) {
-				$(this).wrap('<div class="input input-select" />');
+	// Wrap all existing selects in <div class="input input-select">..</div>
+	$('select').each(function() {
+		if(!$(this).parents('.input').length) {
+			var selectClasses = $(this).attr('class');
+			$(this).wrap('<div class="input input-select '+ selectClasses + '" />');
+		}
+	});
+
+	// Plugin
+	$.fn.selectify = function() {
+		// Loop through all elements in jQ obj.
+		this.each(function () {
+			// Only run once
+			if($.inArray($(this)[0],selectified) !== -1) {
+				return false;
 			}
-		});
+			selectified.push($(this)[0]);
 
-		// Plugin
-		$.fn.selectify = function() {
-			// Loop through all elements in jQ obj.
-			this.each(function () {
-				// Only run once
-				if($.inArray($(this)[0],selectified) !== -1) {
-					return false;
-				}
-				selectified.push($(this)[0]);
+			// If not running on a select, pass through
+			if(!$(this).is('select')) {
+				return false;
+			}
 
-				// If not running on a select, pass through
-				if(!$(this).is('select')) {
-					return false;
-				}
+			// References
+			var $select = $(this);
+			var options = $select[0].options;
+			var $parent = $(this).parents('.input').first();
 
-				// References
-				var $select = $(this);
-				var options = $select[0].options;
-				var $parent = $(this).parents('.input').first();
+			// Context object
+			var ctx = {
+				$select : $select,
+				options: options,
+				$parent: $parent,
+				status: 'closed',
+				events: {}
+			};
 
-				// Context object
-				var ctx = {
-					$select : $select,
-					options: options,
-					$parent: $parent,
-					status: 'closed',
-					events: {}
-				};
+			// Add a unique ID
+			var uniqid = ids.length + 1;
+			ids.push('');
 
-				// Add a unique ID
-				var uniqid = ids.length + 1;
-				ids.push('');
+			// Create new list that will be used as a replacement for the <select>
+			var wrapperSelector = 'select-wrapper-' + uniqid;
+			ctx.wrapperSelector = '.' + wrapperSelector;
+			var html = '<div class="select-wrapper ' + wrapperSelector + '">';
 
-				// Create new list that will be used as a replacement for the <select>
-				var wrapperSelector = 'select-wrapper-' + uniqid;
-				ctx.wrapperSelector = '.' + wrapperSelector;
-				var html = '<div class="select-wrapper ' + wrapperSelector + '">';
+			// Top bar
+			var $active = $select.find('option:selected');
+			var value = $active.attr('value');
+			var label = $active.html();
 
-				// Top bar
-				var $active = $select.find('option:selected');
-				var value = $active.attr('value');
-				var label = $active.html();
+			html += '<div class="select-active"';
+			html += 'data-value="'+ value + '"';
+			html += 'data-label="'+ label +'">';
+			html += label + '</div>';
 
-				html += '<div class="select-active"';
-				html += 'data-value="'+ value + '"';
-				html += 'data-label="'+ label +'">';
-				html += label + '</div>';
+			// Options
+			html += '<ul class="select-options dropdown-options">';
 
-				// Options
-				html += '<ul class="select-options dropdown-options">';
+			$.each(options, function(i,option) {
+				var $option = $(option);
+				var value = $option.attr('value');
 
-				$.each(options, function(i,option) {
-					var $option = $(option);
-					var value = $option.attr('value');
-
-					// TODO: Escape quotes when in the data-label tag
-					var label = $option.html();
-					html += '<li data-value="'+ value +'" data-label="'+ label +'">' + label + '</li>';
-				});
-
-				html += '</ul>';
-				html += '</div>'; // select-wrapper
-
-				// Append the UL
-				$parent.append(html);
-
-				// Add more data
-				ctx.$wrapper = $('.select-wrapper', $parent);
-				ctx.$active = $('.select-active', $parent);
-				ctx.$options = $('.select-options', $parent);
-
-				// Create events
-				var ns = '.ns_select_' + uniqid;
-				ctx.ns = ns;
-				$('body').on('click'+ns, ctx, bodyClicked);
-				$('.select-active', $parent).on('click'+ns, ctx, selectToggle);
-				$('.select-wrapper', $parent).on('destroyed'+ns, ctx, divRemoved);
-				$('.select-options li', $parent).on('click'+ns, ctx, clickedItem);
+				// TODO: Escape quotes when in the data-label tag
+				var label = $option.html();
+				html += '<li data-value="'+ value +'" data-label="'+ label +'">' + label + '</li>';
 			});
-		};
 
-		// Click anywhere on the body
-		function bodyClicked(e) {
-			// http://stackoverflow.com/a/1423722
-			if(!$(event.target).closest(e.data.wrapperSelector).length) {
-				// Close menu when clicking off
-				selectClose(e.data);
-			}
-		}
+			html += '</ul>';
+			html += '</div>'; // /select-wrapper
 
-		// Callback when the select-wrapper is removed
-		function divRemoved(e) {
-			events = e.data.events;
-			ns = e.data.ns;
-			$select = e.data.$select;
+			// Append the UL
+			$parent.append(html);
 
-			// Clean up events
-			$('body').off(ns);
+			// Add more data
+			ctx.$wrapper = $('.select-wrapper', $parent);
+			ctx.$active = $('.select-active', $parent);
+			ctx.$options = $('.select-options', $parent);
 
-			// Remove from selectified list
-			arrayRemove(selectified, $select[0]);
-		}
+			// Move wrapper off screen, show it, calculate the min
+			// width required for it, then move it back on screen
+			// and hide it..
+			var styleAttr = ctx.$options.attr('style') || '';
+			ctx.$options.css({
+				position: 'absolute',
+				top: '-9999px',
+				left: '-9999px',
+				display: 'block'
+			});
 
-		// Clicked on any of the select options
-		function clickedItem(e) {
-			var $li = $(e.target);
-			var label = $li.attr('data-label');
-			var value = $li.attr('data-value');
+			var _minWidth = ctx.$options.outerWidth() +
+											ctx.$wrapper.css('border-left-width')
+											.replace('px','') * 1 +
+											ctx.$wrapper.css('border-right-width')
+											.replace('px','') * 1 + 'px';
 
-			// Forward to update function
-			selectUpdateValue(e.data,label,value);
+			ctx.$wrapper.css('min-width',_minWidth);
 
+			ctx.$options.attr('style',styleAttr);
+
+			// Create events
+			var ns = '.ns_select_' + uniqid;
+			ctx.ns = ns;
+			$('body').on('click'+ns, ctx, bodyClicked);
+			$('.select-active', $parent).on('click'+ns, ctx, selectToggle);
+			$('.select-wrapper', $parent).on('destroyed'+ns, ctx, divRemoved);
+			$('.select-options li', $parent).on('click'+ns, ctx, clickedItem);
+		});
+	};
+
+	// Click anywhere on the body
+	function bodyClicked(e) {
+		// http://stackoverflow.com/a/1423722
+		if(!$(event.target).closest(e.data.wrapperSelector).length) {
+			// Close menu when clicking off
 			selectClose(e.data);
 		}
+	}
 
-		// Update the active value for the select
-		function selectUpdateValue(data,label,value) {
-			// Update original select
-			data.$select.val(value);
-			data.$select.trigger('change');
+	// Callback when the select-wrapper is removed
+	function divRemoved(e) {
+		events = e.data.events;
+		ns = e.data.ns;
+		$select = e.data.$select;
 
-			// Update label
-			data.$active.attr('data-label',label);
-			data.$active.attr('data-value',value);
-			data.$active.html(label);
+		// Clean up events
+		$('body').off(ns);
+
+		// Remove from selectified list
+		arrayRemove(selectified, $select[0]);
+	}
+
+	// Clicked on any of the select options
+	function clickedItem(e) {
+		var $li = $(e.target);
+		var label = $li.attr('data-label');
+		var value = $li.attr('data-value');
+
+		// Forward to update function
+		selectUpdateValue(e.data,label,value);
+
+		selectClose(e.data);
+	}
+
+	// Update the active value for the select
+	function selectUpdateValue(data,label,value) {
+		// Update original select
+		data.$select.val(value);
+		data.$select.trigger('change');
+
+		// Update label
+		data.$active.attr('data-label',label);
+		data.$active.attr('data-value',value);
+		data.$active.html(label);
+	}
+
+	// Toggle menu
+	function selectToggle(event) {
+		// If it's closed, open
+		var status = event.data.status;
+
+		if(status === 'closed') {
+			selectOpen(event.data);
+		} else {
+			selectClose(event.data);
 		}
+	}
 
-		// Toggle menu
-		function selectToggle(event) {
-			// If it's closed, open
-			var status = event.data.status;
+	// Open menu
+	function selectOpen(data) {
+		data.$options.show();
 
-			if(status === 'closed') {
-				selectOpen(event.data);
-			} else {
-				selectClose(event.data);
-			}
-		}
+		$(data.$wrapper).addClass('select-wrapper-open');
+		$(data.$active).addClass('select-wrapper-open');
 
-		// Open menu
-		function selectOpen(data) {
-			data.$options.show();
+		// Update status
+		data.status = 'opened';
+	}
 
-			$(data.$wrapper).addClass('select-wrapper-open');
-			$(data.$active).addClass('select-wrapper-open');
+	// Close menu
+	function selectClose(data) {
+		data.$options.hide();
 
-			// Update status
-			data.status = 'opened';
-		}
+		$(data.$wrapper).removeClass('select-wrapper-open');
+		$(data.$active).removeClass('select-wrapper-open');
 
-		// Close menu
-		function selectClose(data) {
-			data.$options.hide();
+		// Update status
+		data.status = 'closed';
+	}
 
-			$(data.$wrapper).removeClass('select-wrapper-open');
-			$(data.$active).removeClass('select-wrapper-open');
-
-			// Update status
-			data.status = 'closed';
-		}
-
-		// Trigger plugin on existing <selects> and new ones that get added
-		$(document).on('everyinsert', selector, function() { $(this).selectify(); });
-
-	}(jQuery));
+	// Trigger plugin on existing <selects> and new ones that get added
+	$(document).on('everyinsert', selector, function() { $(this).selectify(); });
 });
