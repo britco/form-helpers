@@ -104,7 +104,8 @@ $(document).ready(function() {
 			html += label + '</div>';
 
 			// Options
-			html += '<ul class="select-options dropdown-options">';
+			html += '<ul class="select-options dropdown-options" style="';
+			html += 'visibility: hidden; max-height: 0; overflow: hidden">';
 
 			$.each(options, function(i,option) {
 				var $option = $(option);
@@ -125,27 +126,6 @@ $(document).ready(function() {
 			ctx.$wrapper = $('.select-wrapper', $parent);
 			ctx.$active = $('.select-active', $parent);
 			ctx.$options = $('.select-options', $parent);
-
-			// Move wrapper off screen, show it, calculate the min
-			// width required for it, then move it back on screen
-			// and hide it..
-			var styleAttr = ctx.$options.attr('style') || '';
-			ctx.$options.css({
-				position: 'absolute',
-				top: '-9999px',
-				left: '-9999px',
-				display: 'block'
-			});
-
-			var _minWidth = ctx.$options.outerWidth() +
-											ctx.$wrapper.css('border-left-width')
-											.replace('px','') * 1 +
-											ctx.$wrapper.css('border-right-width')
-											.replace('px','') * 1 + 'px';
-
-			ctx.$wrapper.css('min-width',_minWidth);
-
-			ctx.$options.attr('style',styleAttr);
 
 			// Create events
 			var ns = '.ns_select_' + uniqid;
@@ -174,6 +154,7 @@ $(document).ready(function() {
 
 		// Clean up events
 		$('body').off(ns);
+		$(window).off(ns);
 
 		// Remove from selectified list
 		arrayRemove(selectified, $select[0]);
@@ -217,7 +198,11 @@ $(document).ready(function() {
 
 	// Open menu
 	function selectOpen(data) {
-		data.$options.show();
+		data.$options.css({
+			'visibility': 'visible',
+			'max-height': 'none',
+			'overflow': 'visible'
+		});
 
 		$(data.$wrapper).addClass('select-wrapper-open');
 		$(data.$active).addClass('select-wrapper-open');
@@ -228,7 +213,11 @@ $(document).ready(function() {
 
 	// Close menu
 	function selectClose(data) {
-		data.$options.hide();
+		data.$options.css({
+			'visibility': 'hidden',
+			'max-height': '0',
+			'overflow': 'hidden'
+		});
 
 		$(data.$wrapper).removeClass('select-wrapper-open');
 		$(data.$active).removeClass('select-wrapper-open');

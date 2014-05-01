@@ -51,12 +51,19 @@ Install packages:
 
 ````
 sudo npm install
+sudo bower install
 ````
 
 Watch for changes
 
 ````
 grunt watch
+````
+
+Build release
+
+````
+grunt build
 ````
 
 ## License

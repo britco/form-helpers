@@ -9,7 +9,11 @@ module.exports = (grunt) ->
 		pkg: pkg
 		concat:
 			dist:
-				src: ['src/global.js', 'src/*.js', 'src/**/*.js']
+				src: [
+					'src/global.js',
+					'src/*.js',
+					'src/**/*.js'
+				]
 		uglify:
 			options:
 				mangle: false
@@ -28,7 +32,7 @@ module.exports = (grunt) ->
 				src: ['<%= pkg.distDirectory %>/<%= pkg.name %>-latest.js']
 				dest: '<%= pkg.distDirectory %>/<%= pkg.name %>-<%= pkg.version %>.js'
 		watch:
-			files: ['src/*.js', 'src/**.js']
+			files: ['src/**/*.js']
 			tasks: ['concat','uglify']
 
 	# Dev / prod toggles
