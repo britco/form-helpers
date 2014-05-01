@@ -115,7 +115,10 @@ $(document).ready(function() {
 
 			// Options
 			html += '<ul class="select-options dropdown-options" style="';
-			html += 'visibility: hidden; max-height: 0; overflow: hidden">';
+			html += 'display: block; ';
+			html += 'visibility: hidden; ';
+			html += 'max-height: 0; ';
+			html += 'overflow: hidden">';
 
 			$.each(options, function(i,option) {
 				var $option = $(option);
