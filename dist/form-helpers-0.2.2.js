@@ -81,6 +81,7 @@ $(document).ready(function() {
             html += '<div class="select-active"';
             html += 'data-value="' + value + '"';
             html += 'data-label="' + label + '">';
+            html += '<div class="icon-ui-dropdown-arrow"></div>';
             html += label + "</div>";
             html += '<ul class="select-options dropdown-options" style="';
             html += "display: block; ";
