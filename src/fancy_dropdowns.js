@@ -28,6 +28,7 @@ $(document).ready(function() {
 	// Config
 	var defaultConfig = {
 		selector: '.input.input-select:not([data-fancy-dropdowns="off"]) select',
+		beforeActive: '<div class="icon-ui-dropdown-arrow"></div>',
 		enabled: true
 	};
 
@@ -101,7 +102,7 @@ $(document).ready(function() {
 			html += '<div class="select-active"';
 			html += 'data-value="'+ value + '"';
 			html += 'data-label="'+ label +'">';
-			html += '<div class="icon-ui-dropdown-arrow"></div>';
+			html += config.beforeActive;
 			html += label + '</div>';
 
 			// Options
@@ -185,7 +186,7 @@ $(document).ready(function() {
 		// Update label
 		data.$active.attr('data-label',label);
 		data.$active.attr('data-value',value);
-		data.$active.html(label);
+		data.$active.html(config.beforeActive + label);
 	}
 
 	// Toggle menu
