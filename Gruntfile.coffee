@@ -46,6 +46,11 @@ module.exports = (grunt) ->
 
 	# Tasks
 	# =====
+	grunt.registerTask 'default', ->
+		grunt.task.run 'concat'
+		grunt.task.run 'uglify'
+		grunt.task.run 'watch'
+
 	grunt.registerTask 'build', ->
 		# Build for release
 		grunt.task.run 'concat'
