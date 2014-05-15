@@ -56,7 +56,7 @@ module.exports = (grunt) ->
 		grunt.task.run 'concat'
 
 		grunt.config.set('uglify.dist.dest',
-			'<%= pkg.devDistDirectory %>/<%= pkg.name %>-<%= pkg.version %>.js'
+			'<%= pkg.distDirectory %>/<%= pkg.name %>-<%= pkg.version %>.js'
 		)
 
 		grunt.task.run 'uglify'

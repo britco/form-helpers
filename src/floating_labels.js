@@ -4,9 +4,9 @@ $(document).ready(function(){
 			if(dest[k] === void 0) {
 				dest[k] = source[k];
 			}
-
-			return dest;
 		}
+
+		return dest;
 	};
 
 	// Config
