@@ -3,6 +3,9 @@ module.exports = (grunt) ->
 	# =======
 	pkg = require './package.json'
 
+	if process.env['DEV'] is 'true'
+		pkg.distDirectory = pkg.devDistDirectory
+
 	# Configuration
 	# =============
 	grunt.initConfig
@@ -14,6 +17,7 @@ module.exports = (grunt) ->
 					'src/*.js',
 					'src/**/*.js'
 				]
+				dest: '<%= pkg.distDirectory %>/<%= pkg.name %>-latest.js'
 		uglify:
 			options:
 				mangle: false
@@ -29,19 +33,11 @@ module.exports = (grunt) ->
 
 				 '''
 			dist:
-				src: ['<%= pkg.distDirectory %>/<%= pkg.name %>-latest.js']
-				dest: '<%= pkg.distDirectory %>/<%= pkg.name %>-<%= pkg.version %>.js'
+				src: '<%= pkg.distDirectory %>/<%= pkg.name %>-latest.js'
+				dest: '<%= pkg.distDirectory %>/<%= pkg.name %>-latest.js'
 		watch:
 			files: ['src/**/*.js']
 			tasks: ['concat','uglify']
-
-	# Dev / prod toggles
-	if process.env['DEV'] is 'true'
-		grunt.config.set('concat.dist.dest', '<%= pkg.devDistDirectory %>/<%= pkg.name %>-latest.js')
-		grunt.config.set('uglify.dist.dest', '<%= pkg.devDistDirectory %>/<%= pkg.name %>-<%= pkg.version %>.js')
-	else
-		grunt.config.set('concat.dist.dest', '<%= pkg.distDirectory %>/<%= pkg.name %>-latest.js')
-		grunt.config.set('uglify.dist.dest', '<%= pkg.distDirectory %>/<%= pkg.name %>-<%= pkg.version %>.js')
 
 	# Dependencies
 	# ============
@@ -54,5 +50,8 @@ module.exports = (grunt) ->
 		# Build for release
 		grunt.task.run 'concat'
 
-		if process.env?.DEV != 'true'
-			grunt.task.run 'uglify'
+		grunt.config.set('uglify.dist.dest',
+			'<%= pkg.devDistDirectory %>/<%= pkg.name %>-<%= pkg.version %>.js'
+		)
+
+		grunt.task.run 'uglify'
