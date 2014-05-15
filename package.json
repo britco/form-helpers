@@ -2,7 +2,7 @@
   "author": "",
   "name": "form-helpers",
   "description": "",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "homepage": "",
   "repository": {
     "type": "git",
@@ -20,7 +20,7 @@
     "grunt-contrib-concat": "0.1.x",
     "grunt-contrib-copy": "0.4.x",
     "grunt-contrib-compress": "0.4.x",
-    "grunt-contrib-watch": "0.1.4",
+    "grunt-contrib-watch": "~0.6.1",
     "grunt-bower-task": "0.1.x",
     "grunt-contrib-uglify": "0.2.x",
     "grunt-istanbul": "0.2.x",

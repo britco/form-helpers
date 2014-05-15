@@ -7,9 +7,9 @@ $(document).ready(function() {
 			if(dest[k] === void 0) {
 				dest[k] = source[k];
 			}
-
-			return dest;
 		}
+
+		return dest;
 	};
 
 	// arrayRemove([1,2],1);
@@ -82,6 +82,7 @@ $(document).ready(function() {
 				options: options,
 				$parent: $parent,
 				status: 'closed',
+				config: config,
 				events: {}
 			};
 
@@ -102,7 +103,7 @@ $(document).ready(function() {
 			html += '<div class="select-active"';
 			html += 'data-value="'+ value + '"';
 			html += 'data-label="'+ label +'">';
-			html += config.beforeActive;
+			html += (config.beforeActive || '');
 			html += label + '</div>';
 
 			// Options
@@ -186,7 +187,7 @@ $(document).ready(function() {
 		// Update label
 		data.$active.attr('data-label',label);
 		data.$active.attr('data-value',value);
-		data.$active.html(config.beforeActive + label);
+		data.$active.html((data.config.beforeActive || '') + label);
 	}
 
 	// Toggle menu
