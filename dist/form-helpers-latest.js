@@ -58,18 +58,18 @@ $(document).ready(function() {
 	// Example:
 	// $('body').after('<div class="input input-select"><select><option value="volvo">Volvo</option></select></div>');
 
-	// Wrap all existing selects in <div class="input input-select">..</div>
-	$('select').each(function() {
-		if(!$(this).parents('.input').length) {
-			var selectClasses = $(this).attr('class');
-			$(this).wrap('<div class="input input-select '+ selectClasses + '" />');
-		}
-	});
-
 	// Plugin
 	$.fn.selectify = function() {
 		// Loop through all elements in jQ obj.
 		this.each(function () {
+
+			// Wrap select in <div class="input input-select">..</div>
+			// if it needs it
+			if(!$(this).parents('.input').length) {
+				var selectClasses = $(this).attr('class');
+				$(this).wrap('<div class="input input-select '+ selectClasses + '" />');
+			}
+
 			// Only run once
 			if($.inArray($(this)[0],selectified) !== -1) {
 				return false;
