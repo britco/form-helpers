@@ -210,7 +210,7 @@ $(document).ready(function() {
         }
     }
     function selectOpen(ctx) {
-        var search_delay = 399;
+        var search_delay = 475;
         ctx.$options.css({
             visibility: "visible",
             "max-height": "none",
