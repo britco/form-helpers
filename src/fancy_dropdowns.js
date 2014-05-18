@@ -1,3 +1,5 @@
+/*jshint smarttabs:true */
+
 $(document).ready(function() {
 	// Global
 
@@ -11,6 +13,19 @@ $(document).ready(function() {
 
 		return dest;
 	};
+
+	function debounce(func, wait, immediate) {
+		var timeout;
+		return function() {
+			var context = this, args = arguments;
+			clearTimeout(timeout);
+			timeout = setTimeout(function() {
+				timeout = null;
+				if (!immediate) func.apply(context, args);
+			}, wait);
+				if (immediate && !timeout) func.apply(context, args);
+		};
+	}
 
 	// arrayRemove([1,2],1);
 	// See http://stackoverflow.com/a/3955096
@@ -83,6 +98,7 @@ $(document).ready(function() {
 				$parent: $parent,
 				status: 'closed',
 				config: config,
+				labels: [],
 				events: {}
 			};
 
@@ -98,6 +114,7 @@ $(document).ready(function() {
 			// Top bar
 			var $active = $select.find('option:selected');
 			var value = $active.attr('value');
+			ctx.selected = value;
 			var label = $active.html();
 
 			html += '<div class="select-active"';
@@ -119,7 +136,10 @@ $(document).ready(function() {
 
 				// TODO: Escape quotes when in the data-label tag
 				var label = $option.html();
-				html += '<li data-value="'+ value +'" data-label="'+ label +'">' + label + '</li>';
+				var labelSlug = label.trim().toLowerCase();
+				ctx.labels.push(labelSlug);
+				html += '<li class="select-option" data-value="'+ value +'" data-label="'+ label +'"';
+				html += ' data-label-slug="' + labelSlug + '">' + label + '</li>';
 			});
 
 			html += '</ul>';
@@ -140,6 +160,7 @@ $(document).ready(function() {
 			$('.select-active', $parent).on('click'+ns, ctx, selectToggle);
 			$('.select-wrapper', $parent).on('destroyed'+ns, ctx, divRemoved);
 			$('.select-options li', $parent).on('click'+ns, ctx, clickedItem);
+			$('.select-options', $parent).on('mouseover'+ns, 'li', ctx, hoverOverItem);
 		});
 	};
 
@@ -160,6 +181,7 @@ $(document).ready(function() {
 
 		// Clean up events
 		$('body').off(ns);
+		$(document).off(ns);
 		$(window).off(ns);
 
 		// Remove from selectified list
@@ -173,21 +195,66 @@ $(document).ready(function() {
 		var value = $li.attr('data-value');
 
 		// Forward to update function
-		selectUpdateValue(e.data,label,value);
+		selectUpdateValue(e.data,$li);
 
 		selectClose(e.data);
 	}
 
-	// Update the active value for the select
-	function selectUpdateValue(data,label,value) {
+	function hoverOverItem(e) {
+		// Update currently hovered over item
+		selectUpdateHover(e.data,$(e.target));
+	}
+
+	// Update the active value for the select based on the attributes from $li
+	function selectUpdateValue(ctx,$li,flash) {
+		var label = $li.attr('data-label');
+		var value = $li.attr('data-value');
+
 		// Update original select
-		data.$select.val(value);
-		data.$select.trigger('change');
+		ctx.$select.val(value);
+		ctx.$select.trigger('change');
+
+		// Update context with new value
+		ctx.selected = value;
+
+		// Update active class
+		ctx.$options.find('> li.active')
+			 .not('li[data-value="' + $li.attr('data-value') + '"]')
+			 .removeClass('active');
+
+		if(typeof(flash) !== "undefined") {
+			$li.css({
+				'background': 'transparent',
+				'border-color': 'transparent'
+			});
+			window.setTimeout(function() { $li.removeAttr('style'); }, flash);
+		} else {
+			$li.addClass('active');
+		}
 
 		// Update label
-		data.$active.attr('data-label',label);
-		data.$active.attr('data-value',value);
-		data.$active.html((data.config.beforeActive || '') + label);
+		ctx.$active.attr('data-label',label);
+		ctx.$active.attr('data-value',value);
+		ctx.$active.html((ctx.config.beforeActive || '') + label);
+	}
+
+	// Update the LI that is currently being hovered on.. Accessible by function
+	// for search and what not..
+	function selectUpdateHover(ctx,$li) {
+		var action = function() {
+			if(ctx.hasOwnProperty('$hover')) {
+				ctx.$hover.removeClass('hover');
+			}
+
+			ctx.$hover = $li;
+			$li.addClass('hover');
+		};
+
+		if(window.requestAnimationFrame) {
+			window.requestAnimationFrame(action);
+		} else {
+			action();
+		}
 	}
 
 	// Toggle menu
@@ -203,18 +270,123 @@ $(document).ready(function() {
 	}
 
 	// Open menu
-	function selectOpen(data) {
-		data.$options.css({
+	function selectOpen(ctx) {
+		var search_delay = 299;
+
+		ctx.$options.css({
 			'visibility': 'visible',
 			'max-height': 'none',
 			'overflow': 'visible'
 		});
 
-		$(data.$wrapper).addClass('select-wrapper-open');
-		$(data.$active).addClass('select-wrapper-open');
+		$(ctx.$wrapper).addClass('select-wrapper-open');
+		$(ctx.$active).addClass('select-wrapper-open');
+
+		// Add active class to whichever item was active
+		ctx.$hover = ctx.$options.find('> li[data-value="' + ctx.selected + '"]');
+		ctx.$hover.addClass('active');
+
+		// Bindings for search
+		$(document).on('keyup' + ctx.ns + 'active', function(e) {
+			// Don't close the dropdown now, because you are probably searching for
+			// something
+			window.clearTimeout(ctx.updateAndCloseTimeout);
+
+			ctx.search_term = ctx.search_term || '';
+			ctx.search_term += String.fromCharCode(e.keyCode).toLowerCase();
+
+			// Do a new search
+			debounce(function() {
+				selectSearch.call(this,ctx);
+			}, 15)();
+		});
+
+		$(document).on('keyup' + ctx.ns + 'active', debounce(function(e) {
+			ctx.search_term = '';
+		}, search_delay));
+
+		$(document).on('keydown' + ctx.ns + 'active', function(e) {
+			// 40: down arrow
+			// 38: up arrow
+			// 27: esc
+
+			if(e.shiftKey) {
+				return;
+			}
+
+			// Can use arrows to move between items
+			if(e.keyCode == 40 || e.keyCode == 38) {
+				e.preventDefault();
+
+				if(ctx.hasOwnProperty('$hover') && ctx.$hover.length) {
+					var dir;
+					if(e.keyCode == 40) {
+						dir = 'next';
+					} else {
+						dir = 'prev';
+					}
+
+					if(ctx.$hover[dir]('li').length) {
+						var $next = ctx.$hover[dir]('li');
+						selectUpdateHover(ctx,$next);
+
+						if (Element.prototype.scrollIntoViewIfNeeded) {
+							$next.get(0).scrollIntoViewIfNeeded(false);
+						}
+					}
+				}
+			}
+
+			// Esc key, just close
+			if (!e.shiftKey && e.keyCode == 27) {
+				selectClose(ctx);
+			}
+
+			// Change value to hovered-over LI when hitting enter or space
+			if(!e.shiftKey && (e.keyCode == 32 || e.keyCode == 13)) {
+				// Don't scroll if you hit space when select is open
+				if(e.keyCode == 32) {
+					e.preventDefault();
+				}
+
+				var updateAndClose = function() {
+					if(ctx.hasOwnProperty('$hover') && ctx.$hover.length) {
+						selectUpdateValue(ctx,ctx.$hover,80);
+					}
+
+					window.setTimeout(function() { selectClose(ctx); }, 120);
+				};
+
+				if(e.keyCode == 32) {
+					// If you hit space bar, wait a little before triggering, because
+					// you could be in the middle of a search
+					ctx.updateAndCloseTimeout = window.setTimeout(updateAndClose, 60);
+				} else {
+					updateAndClose();
+				}
+			}
+		});
 
 		// Update status
-		data.status = 'opened';
+		ctx.status = 'opened';
+	}
+
+	// If there is a matching term, focus on it
+	function selectSearch(ctx) {
+		var searchTerm = ctx.search_term.trim();
+		var match = ctx.$options
+									 .find('> li[data-label-slug^="' + searchTerm + '"]')
+									 .first();
+
+		if(match.length) {
+			// Update the hover state to the new LI
+			selectUpdateHover(ctx,match);
+
+			// Scroll to this LI
+			if (Element.prototype.scrollIntoViewIfNeeded) {
+				match[0].scrollIntoViewIfNeeded(true);
+			}
+		}
 	}
 
 	// Close menu
@@ -225,11 +397,19 @@ $(document).ready(function() {
 			'overflow': 'hidden'
 		});
 
+		// Remove active listeners.. listeners that were only active when menu was
+		// open
+		$(document).off('keydown' + data.ns + 'active');
+		$(document).off('keyup' + data.ns + 'active');
+
 		$(data.$wrapper).removeClass('select-wrapper-open');
 		$(data.$active).removeClass('select-wrapper-open');
 
 		// Update status
 		data.status = 'closed';
+
+		// Clear the hover state
+		$(data.$options).find(' > li.hover').removeClass('hover');
 	}
 
 	// Trigger plugin on existing <selects> and new ones that get added
