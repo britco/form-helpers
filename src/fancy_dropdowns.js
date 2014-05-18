@@ -271,7 +271,7 @@ $(document).ready(function() {
 
 	// Open menu
 	function selectOpen(ctx) {
-		var search_delay = 299;
+		var search_delay = 399;
 
 		ctx.$options.css({
 			'visibility': 'visible',
