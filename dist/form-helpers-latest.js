@@ -206,7 +206,7 @@ $(document).ready(function() {
 	// Click anywhere on the body
 	function bodyClicked(e) {
 		// http://stackoverflow.com/a/1423722
-		if(!$(event.target).closest(e.data.wrapperSelector).length) {
+		if(!$(e.target).closest(e.data.wrapperSelector).length) {
 			// Close menu when clicking off
 			selectClose(e.data);
 		}
@@ -348,7 +348,6 @@ $(document).ready(function() {
 			// 40: down arrow
 			// 38: up arrow
 			// 27: esc
-
 			if(e.shiftKey) {
 				return;
 			}
@@ -370,7 +369,7 @@ $(document).ready(function() {
 						selectUpdateHover(ctx,$next);
 
 						if (Element.prototype.scrollIntoViewIfNeeded) {
-							$next.get(0).scrollIntoViewIfNeeded(false);
+							$next.get(0).scrollIntoViewIfNeeded(true);
 						}
 					}
 				}

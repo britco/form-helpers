@@ -142,7 +142,7 @@ $(document).ready(function() {
         });
     };
     function bodyClicked(e) {
-        if (!$(event.target).closest(e.data.wrapperSelector).length) {
+        if (!$(e.target).closest(e.data.wrapperSelector).length) {
             selectClose(e.data);
         }
     }
@@ -248,7 +248,7 @@ $(document).ready(function() {
                         var $next = ctx.$hover[dir]("li");
                         selectUpdateHover(ctx, $next);
                         if (Element.prototype.scrollIntoViewIfNeeded) {
-                            $next.get(0).scrollIntoViewIfNeeded(false);
+                            $next.get(0).scrollIntoViewIfNeeded(true);
                         }
                     }
                 }
