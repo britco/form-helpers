@@ -110,8 +110,8 @@ $(document).ready(function() {
 			// Wrap select in <div class="input input-select">..</div>
 			// if it needs it
 			if(!$(this).parents('.input').length) {
-				var selectClasses = $(this).attr('class');
-				$(this).wrap('<div class="input input-select '+ selectClasses + '" />');
+				var selectClasses = $(this).attr('class') ? ' ' + $(this).attr('class') : '';
+				$(this).wrap('<div class="input input-select'+ selectClasses + '" />');
 			}
 
 			// Only run once
