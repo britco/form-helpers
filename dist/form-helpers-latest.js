@@ -262,11 +262,10 @@ $(document).ready(function() {
 			 .removeClass('active');
 
 		if(typeof(flash) !== "undefined") {
-			$li.css({
-				'background': 'transparent',
-				'border-color': 'transparent'
-			});
-			window.setTimeout(function() { $li.removeAttr('style'); }, flash);
+			$li.removeClass('active hover');
+			window.setTimeout(function() {
+				$li.addClass('active');
+			}, flash);
 		} else {
 			$li.addClass('active');
 		}
