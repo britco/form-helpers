@@ -1,11 +1,11 @@
 {
   "name": "form-helpers",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "homepage": "https://github.com/britco/form-helpers",
   "authors": [
     "Paul Dufour <paul@brit.co>"
   ],
-  "main": "dist/form-helpers-0.2.2.js",
+  "main": "dist/form-helpers-0.3.0.js",
   "license": "MIT",
   "ignore": [
     "**/.*",
@@ -15,6 +15,6 @@
     "tests"
   ],
   "dependencies": {
-    "every-insert": "0.1.1"
+    "every-insert": "0.1.2"
   }
 }
