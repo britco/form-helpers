@@ -117,10 +117,6 @@ $(document).ready(function() {
 			ctx.selected = value;
 			var label = $active.html();
 
-			$select.change(function(evt) {
-				selectionChanged.call(this, ctx, evt);
-			});
-
 			html += '<div class="select-active"';
 			html += 'data-value="'+ value + '"';
 			html += 'data-label="'+ label +'">';
@@ -165,14 +161,16 @@ $(document).ready(function() {
 			$('.select-wrapper', $parent).on('destroyed'+ns, ctx, divRemoved);
 			$('.select-options li', $parent).on('click'+ns, ctx, clickedItem);
 			$('.select-options', $parent).on('mouseover'+ns, 'li', ctx, hoverOverItem);
+			$select.on('change'+ns, ctx, selectionChanged);
 		});
 	};
 
 	// Updates the UI whenever the select element changes
-	function selectionChanged(ctx, evt) {
+	function selectionChanged(evt) {
+		var ctx = evt.data;
 		var $allSelected = $(this).find(':selected');
 		var value = $allSelected.attr('value');
-		var $selectedOptions = ctx.$options.find('[data-value=' + value + ']');
+		var $selectedOptions = ctx.$options.find('[data-value="' + value + '"]');
 		selectUpdateValue(ctx, $selectedOptions, undefined, false);
 	}
 
@@ -225,7 +223,12 @@ $(document).ready(function() {
 		// Update original select
 		ctx.$select.val(value);
 
+		// Fire a change event, but don't allow **our** onChange event to fire.. that
+		// is just asking for trouble..
+		var ns = ctx.ns;
+		ctx.$select.off('change'+ns, selectionChanged);
 		if (retrigger !== false) { ctx.$select.trigger('change'); }
+		ctx.$select.on('change'+ns, ctx, selectionChanged);
 
 		// Update context with new value
 		ctx.selected = value;

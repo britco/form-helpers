@@ -107,9 +107,6 @@ $(document).ready(function() {
             var value = $active.attr("value");
             ctx.selected = value;
             var label = $active.html();
-            $select.change(function(evt) {
-                selectionChanged.call(this, ctx, evt);
-            });
             html += '<div class="select-active"';
             html += 'data-value="' + value + '"';
             html += 'data-label="' + label + '">';
@@ -142,12 +139,14 @@ $(document).ready(function() {
             $(".select-wrapper", $parent).on("destroyed" + ns, ctx, divRemoved);
             $(".select-options li", $parent).on("click" + ns, ctx, clickedItem);
             $(".select-options", $parent).on("mouseover" + ns, "li", ctx, hoverOverItem);
+            $select.on("change" + ns, ctx, selectionChanged);
         });
     };
-    function selectionChanged(ctx, evt) {
+    function selectionChanged(evt) {
+        var ctx = evt.data;
         var $allSelected = $(this).find(":selected");
         var value = $allSelected.attr("value");
-        var $selectedOptions = ctx.$options.find("[data-value=" + value + "]");
+        var $selectedOptions = ctx.$options.find('[data-value="' + value + '"]');
         selectUpdateValue(ctx, $selectedOptions, undefined, false);
     }
     function bodyClicked(e) {
@@ -178,9 +177,12 @@ $(document).ready(function() {
         var label = $li.attr("data-label");
         var value = $li.attr("data-value");
         ctx.$select.val(value);
+        var ns = ctx.ns;
+        ctx.$select.off("change" + ns, selectionChanged);
         if (retrigger !== false) {
             ctx.$select.trigger("change");
         }
+        ctx.$select.on("change" + ns, ctx, selectionChanged);
         ctx.selected = value;
         ctx.$options.find("> li.active").not('li[data-value="' + $li.attr("data-value") + '"]').removeClass("active");
         if (typeof flash !== "undefined") {
