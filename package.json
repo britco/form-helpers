@@ -12,7 +12,6 @@
     "node": "~0.6.10 || 0.8 || 0.9"
   },
   "distDirectory": "dist",
-  "devDistDirectory": "/Users/pauldufour/Sites/brit_python/brunch/vendor/js",
   "devDependencies": {
     "grunt" : "0.4.2",
     "grunt-bower-task" : "0.1.1",

@@ -5,7 +5,7 @@
   "authors": [
     "Paul Dufour <paul@brit.co>"
   ],
-  "main": "dist/form-helpers-0.3.0.js",
+  "main": "dist/form-helpers-latest.js",
   "license": "MIT",
   "ignore": [
     "**/.*",
