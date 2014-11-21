@@ -117,6 +117,10 @@ $(document).ready(function() {
 			ctx.selected = value;
 			var label = $active.html();
 
+			$select.change(function(evt) {
+				selectionChanged.call(this, evt, ctx);
+			});
+
 			html += '<div class="select-active"';
 			html += 'data-value="'+ value + '"';
 			html += 'data-label="'+ label +'">';
@@ -164,6 +168,14 @@ $(document).ready(function() {
 		});
 	};
 
+	// Updates the UI whenever the select element changes
+	function selectionChanged(evt, ctx) {
+		var $allSelected = $(this).find(':selected');
+		var value = $allSelected.attr('value');
+		var $selectedOptions = ctx.$options.find('[data-value=' + value + ']');
+		selectUpdateValue(ctx, $selectedOptions, undefined, false);
+	}
+
 	// Click anywhere on the body
 	function bodyClicked(e) {
 		// http://stackoverflow.com/a/1423722
@@ -206,13 +218,14 @@ $(document).ready(function() {
 	}
 
 	// Update the active value for the select based on the attributes from $li
-	function selectUpdateValue(ctx,$li,flash) {
+	function selectUpdateValue(ctx,$li,flash,retrigger) {
 		var label = $li.attr('data-label');
 		var value = $li.attr('data-value');
 
 		// Update original select
 		ctx.$select.val(value);
-		ctx.$select.trigger('change');
+
+		if (retrigger !== false) { ctx.$select.trigger('change'); }
 
 		// Update context with new value
 		ctx.selected = value;
