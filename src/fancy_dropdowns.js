@@ -118,7 +118,7 @@ $(document).ready(function() {
 			var label = $active.html();
 
 			$select.change(function(evt) {
-				selectionChanged.call(this, evt, ctx);
+				selectionChanged.call(this, ctx, evt);
 			});
 
 			html += '<div class="select-active"';
@@ -169,7 +169,7 @@ $(document).ready(function() {
 	};
 
 	// Updates the UI whenever the select element changes
-	function selectionChanged(evt, ctx) {
+	function selectionChanged(ctx, evt) {
 		var $allSelected = $(this).find(':selected');
 		var value = $allSelected.attr('value');
 		var $selectedOptions = ctx.$options.find('[data-value=' + value + ']');
