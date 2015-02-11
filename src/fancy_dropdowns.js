@@ -5,14 +5,29 @@ $(document).ready(function() {
 
 	// Functions
 	var defaults = function(dest,source) {
-		for(var k in source) {
-			if(dest[k] === void 0) {
-				dest[k] = source[k];
-			}
-		}
+				for(var k in source) {
+					if(dest[k] === void 0) {
+						dest[k] = source[k];
+					}
+				}
 
-		return dest;
-	};
+				return dest;
+			},
+
+		  markupEscapeCodes = {
+		 		'&': '&amp;',
+		 		'<': '&lt;',
+		 		'>': '&gt;',
+		 		'"': '&quot;',
+		 		"'": '&#39;',
+		 		'/': '&#x2F;'
+		 	};
+
+  function escapeMarkup(subject) {
+    return subject.replace(/[&<>"'\/]/g, function (char) {
+      return markupEscapeCodes[char];
+    });
+  }
 
 	function debounce(func, wait, immediate) {
 		var timeout;
@@ -118,8 +133,8 @@ $(document).ready(function() {
 			var label = $active.html();
 
 			html += '<div class="select-active"';
-			html += 'data-value="'+ value + '"';
-			html += 'data-label="'+ label +'">';
+			html += 'data-value="'+ escapeMarkup(value) + '"';
+			html += 'data-label="'+ escapeMarkup(label) +'">';
 			html += (config.beforeActive || '');
 			html += label + '</div>';
 
@@ -134,12 +149,11 @@ $(document).ready(function() {
 				var $option = $(option);
 				var value = $option.attr('value');
 
-				// TODO: Escape quotes when in the data-label tag
 				var label = $option.html();
 				var labelSlug = label.trim().toLowerCase();
 				ctx.labels.push(labelSlug);
-				html += '<li class="select-option" data-value="'+ value +'" data-label="'+ label +'"';
-				html += ' data-label-slug="' + labelSlug + '">' + label + '</li>';
+				html += '<li class="select-option" data-value="'+ escapeMarkup(value) +'" data-label="'+ escapeMarkup(label) +'"';
+				html += ' data-label-slug="' + escapeMarkup(labelSlug) + '">' + label + '</li>';
 			});
 
 			html += '</ul>';
@@ -389,7 +403,7 @@ $(document).ready(function() {
 	function selectSearch(ctx) {
 		var searchTerm = ctx.search_term.trim();
 		var match = ctx.$options
-									 .find('> li[data-label-slug^="' + searchTerm + '"]')
+									 .find('> li[data-label-slug^="' + escapeMarkup(searchTerm) + '"]')
 									 .first();
 
 		if(match.length) {

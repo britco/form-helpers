@@ -3,6 +3,11 @@
  * @author Paul Dufour
  * @company Brit + Co
  */
+/*!
+ * Form helpers
+ * @author Paul Dufour
+ * @company Brit + Co
+ */
 (function($) {
     $.event.special.destroyed = {
         remove: function(o) {
@@ -36,7 +41,19 @@ $(document).ready(function() {
             }
         }
         return dest;
+    }, markupEscapeCodes = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+        "/": "&#x2F;"
     };
+    function escapeMarkup(subject) {
+        return subject.replace(/[&<>"'\/]/g, function(char) {
+            return markupEscapeCodes[char];
+        });
+    }
     function debounce(func, wait, immediate) {
         var timeout;
         return function() {
@@ -108,8 +125,8 @@ $(document).ready(function() {
             ctx.selected = value;
             var label = $active.html();
             html += '<div class="select-active"';
-            html += 'data-value="' + value + '"';
-            html += 'data-label="' + label + '">';
+            html += 'data-value="' + escapeMarkup(value) + '"';
+            html += 'data-label="' + escapeMarkup(label) + '">';
             html += config.beforeActive || "";
             html += label + "</div>";
             html += '<ul class="select-options dropdown-options" style="';
@@ -123,8 +140,8 @@ $(document).ready(function() {
                 var label = $option.html();
                 var labelSlug = label.trim().toLowerCase();
                 ctx.labels.push(labelSlug);
-                html += '<li class="select-option" data-value="' + value + '" data-label="' + label + '"';
-                html += ' data-label-slug="' + labelSlug + '">' + label + "</li>";
+                html += '<li class="select-option" data-value="' + escapeMarkup(value) + '" data-label="' + escapeMarkup(label) + '"';
+                html += ' data-label-slug="' + escapeMarkup(labelSlug) + '">' + label + "</li>";
             });
             html += "</ul>";
             html += "</div>";
@@ -289,7 +306,7 @@ $(document).ready(function() {
     }
     function selectSearch(ctx) {
         var searchTerm = ctx.search_term.trim();
-        var match = ctx.$options.find('> li[data-label-slug^="' + searchTerm + '"]').first();
+        var match = ctx.$options.find('> li[data-label-slug^="' + escapeMarkup(searchTerm) + '"]').first();
         if (match.length) {
             selectUpdateHover(ctx, match);
             if (Element.prototype.scrollIntoViewIfNeeded) {
