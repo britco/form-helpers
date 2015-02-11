@@ -8,18 +8,34 @@
     "type": "git",
     "url": ""
   },
+  "scripts": {
+    "test": "bin/run_tests.sh PhantomJS --single-run"
+  },
   "engines": {
     "node": "~0.6.10 || 0.8 || 0.9"
   },
   "distDirectory": "dist",
   "devDependencies": {
-    "grunt" : "0.4.2",
-    "grunt-bower-task" : "0.1.1",
-    "grunt-contrib-coffee" : "0.4.0",
-    "grunt-contrib-compress" : "0.4.10",
-    "grunt-contrib-concat" : "0.1.3",
-    "grunt-contrib-copy" : "0.4.1",
-    "grunt-contrib-uglify" : "0.2.7",
-    "grunt-contrib-watch" : "0.6.1"
+    "chai": "^1.10.0",
+    "grunt": "0.4.2",
+    "grunt-bower-task": "0.1.1",
+    "grunt-contrib-coffee": "0.4.0",
+    "grunt-contrib-compress": "0.4.10",
+    "grunt-contrib-concat": "0.1.3",
+    "grunt-contrib-copy": "0.4.1",
+    "grunt-contrib-uglify": "0.2.7",
+    "grunt-contrib-watch": "0.6.1",
+    "karma": "^0.12.31",
+    "karma-chai": "^0.1.0",
+    "karma-chrome-launcher": "^0.1.7",
+    "karma-firefox-launcher": "^0.1.4",
+    "karma-mocha": "^0.1.10",
+    "karma-opera-launcher": "^0.1.0",
+    "karma-phantomjs-launcher": "^0.1.4",
+    "karma-safari-launcher": "^0.1.1",
+    "karma-sinon": "^1.0.4",
+    "mocha": "^2.1.0",
+    "phantomjs": "^1.9.15",
+    "sinon": "^1.12.2"
   }
 }

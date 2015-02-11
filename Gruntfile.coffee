@@ -15,7 +15,9 @@ module.exports = (grunt) ->
 				src: [
 					'src/global.js',
 					'src/*.js',
+					'!src/*_spec.js',
 					'src/**/*.js'
+					'!src/**/*_spec.js'
 				]
 				dest: '<%= pkg.distDirectory %>/<%= pkg.name %>-latest.js'
 		uglify:
