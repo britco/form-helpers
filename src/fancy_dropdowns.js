@@ -5,23 +5,23 @@ $(document).ready(function() {
 
 	// Functions
 	var defaults = function(dest,source) {
-			for(var k in source) {
-				if(dest[k] === void 0) {
-					dest[k] = source[k];
-				}
+		for(var k in source) {
+			if(dest[k] === void 0) {
+				dest[k] = source[k];
 			}
+		}
 
-			return dest;
-		},
+		return dest;
+	},
 
-		markupEscapeCodes = {
-			'&': '&amp;',
-			'<': '&lt;',
-			'>': '&gt;',
-			'"': '&quot;',
-			"'": '&#39;',
-			'/': '&#x2F;'
-		};
+	markupEscapeCodes = {
+		'&': '&amp;',
+		'<': '&lt;',
+		'>': '&gt;',
+		'"': '&quot;',
+		"'": '&#39;',
+		'/': '&#x2F;'
+	};
 
 	function escapeMarkup(subject) {
 		return subject.replace(/[&<>"'\/]/g, function (char) {
