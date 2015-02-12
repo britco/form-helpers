@@ -3,11 +3,6 @@
  * @author Paul Dufour
  * @company Brit + Co
  */
-/*!
- * Form helpers
- * @author Paul Dufour
- * @company Brit + Co
- */
 (function($) {
     $.event.special.destroyed = {
         remove: function(o) {
@@ -76,6 +71,64 @@ $(document).ready(function() {
         }
         return arr;
     };
+    function mapKeyPressToActualCharacter(isShiftKey, characterCode) {
+        if (characterCode === 27 || characterCode === 8 || characterCode === 9 || characterCode === 20 || characterCode === 16 || characterCode === 17 || characterCode === 91 || characterCode === 13 || characterCode === 92 || characterCode === 18) {
+            return false;
+        }
+        if (typeof isShiftKey != "boolean" || typeof characterCode != "number") {
+            return false;
+        }
+        var _to_ascii = {
+            "188": "44",
+            "109": "45",
+            "190": "46",
+            "191": "47",
+            "192": "96",
+            "220": "92",
+            "222": "39",
+            "221": "93",
+            "219": "91",
+            "173": "45",
+            "187": "61",
+            "186": "59",
+            "189": "45"
+        };
+        var shiftUps = {
+            "96": "~",
+            "49": "!",
+            "50": "@",
+            "51": "#",
+            "52": "$",
+            "53": "%",
+            "54": "^",
+            "55": "&",
+            "56": "*",
+            "57": "(",
+            "48": ")",
+            "45": "_",
+            "61": "+",
+            "91": "{",
+            "93": "}",
+            "92": "|",
+            "59": ":",
+            "39": '"',
+            "44": "<",
+            "46": ">",
+            "47": "?"
+        };
+        if (characterCode in _to_ascii) {
+            characterCode = _to_ascii[characterCode];
+        }
+        var character;
+        if (!isShiftKey && (characterCode >= 65 && characterCode <= 90)) {
+            character = String.fromCharCode(characterCode + 32);
+        } else if (isShiftKey && shiftUps.hasOwnProperty(characterCode)) {
+            character = shiftUps[characterCode];
+        } else {
+            character = String.fromCharCode(characterCode);
+        }
+        return character;
+    }
     var defaultConfig = {
         selector: '.input.input-select:not([data-fancy-dropdowns="off"]) select',
         beforeActive: '<div class="icon-ui-dropdown-arrow"></div>',
@@ -125,8 +178,8 @@ $(document).ready(function() {
             ctx.selected = value;
             var label = $active.html();
             html += '<div class="select-active"';
-            html += 'data-value="' + escapeMarkup(value) + '"';
-            html += 'data-label="' + escapeMarkup(label) + '">';
+            html += ' data-value="' + escapeMarkup(value) + '"';
+            html += ' data-label="' + escapeMarkup(label) + '">';
             html += config.beforeActive || "";
             html += label + "</div>";
             html += '<ul class="select-options dropdown-options" style="';
@@ -250,7 +303,10 @@ $(document).ready(function() {
         $(document).on("keyup" + ctx.ns + "active", function(e) {
             window.clearTimeout(ctx.updateAndCloseTimeout);
             ctx.search_term = ctx.search_term || "";
-            ctx.search_term += String.fromCharCode(e.keyCode).toLowerCase();
+            var character = mapKeyPressToActualCharacter(e.shiftKey, e.keyCode);
+            if (character != null && character != false) {
+                ctx.search_term += (character + "").toLowerCase();
+            }
             debounce(function() {
                 selectSearch.call(this, ctx);
             }, 15)();
@@ -306,7 +362,7 @@ $(document).ready(function() {
     }
     function selectSearch(ctx) {
         var searchTerm = ctx.search_term.trim();
-        var match = ctx.$options.find('> li[data-label-slug^="' + escapeMarkup(searchTerm) + '"]').first();
+        var match = ctx.$options.find('> li[data-label-slug^="' + escapeMarkup(searchTerm) + '"],									 	 > li[data-label-slug^="' + searchTerm + '"]').first();
         if (match.length) {
             selectUpdateHover(ctx, match);
             if (Element.prototype.scrollIntoViewIfNeeded) {

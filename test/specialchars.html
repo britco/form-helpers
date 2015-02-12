@@ -1,0 +1,43 @@
+<html>
+<head>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="../bower_components/every-insert/dist/every-insert-latest.js"></script>
+<script src="../dist/form-helpers-latest.js"></script>
+<style>
+  ul {
+    padding: 0;
+    margin: 0;
+  }
+  .select-wrapper {
+    border: 1px solid black;
+  }
+
+  .select-active {
+    border: 1px solid orange;
+  }
+
+  li.hover {
+    color: red;
+  }
+
+  li.active,li:active {
+    color: blue;
+  }
+
+  .select-wrapper-open .select-options {
+    max-height: 300px !important;
+    overflow: scroll !important;
+  }
+</style>
+</head>
+<body>
+<div class="input input-select" style="float: left">
+  <select name="size">
+    <option value="az">az</option>
+    <option value="&quot;">&quot;</option>
+    <option value="&#39;">&#39;</option>
+    <option value="&gt;">&gt;</option>
+  </select>
+</div>
+</body>
+</html>
