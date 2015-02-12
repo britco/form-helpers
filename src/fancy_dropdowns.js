@@ -12,7 +12,22 @@ $(document).ready(function() {
 		}
 
 		return dest;
+	},
+
+	markupEscapeCodes = {
+		'&': '&amp;',
+		'<': '&lt;',
+		'>': '&gt;',
+		'"': '&quot;',
+		"'": '&#39;',
+		'/': '&#x2F;'
 	};
+
+	function escapeMarkup(subject) {
+		return subject.replace(/[&<>"'\/]/g, function (char) {
+			return markupEscapeCodes[char];
+		});
+	}
 
 	function debounce(func, wait, immediate) {
 		var timeout;
@@ -38,7 +53,75 @@ $(document).ready(function() {
 			}
 		}
 		return arr;
-	};
+	}
+
+	// See http://stackoverflow.com/a/4786582/2763703 and
+	// http://stackoverflow.com/a/13127566/2763703
+	function mapKeyPressToActualCharacter(isShiftKey, characterCode) {
+		if (characterCode === 27 || characterCode === 8 || characterCode === 9 || characterCode === 20 || characterCode === 16 || characterCode === 17 || characterCode === 91 || characterCode === 13 || characterCode === 92 || characterCode === 18) {
+			return false;
+		}
+
+		if (typeof isShiftKey != "boolean" || typeof characterCode != "number") {
+			return false;
+		}
+
+		var _to_ascii = {
+			'188': '44',
+			'109': '45',
+			'190': '46',
+			'191': '47',
+			'192': '96',
+			'220': '92',
+			'222': '39',
+			'221': '93',
+			'219': '91',
+			'173': '45',
+			'187': '61', //IE Key codes
+			'186': '59', //IE Key codes
+			'189': '45' //IE Key codes
+		};
+
+		var shiftUps = {
+			"96": "~",
+			"49": "!",
+			"50": "@",
+			"51": "#",
+			"52": "$",
+			"53": "%",
+			"54": "^",
+			"55": "&",
+			"56": "*",
+			"57": "(",
+			"48": ")",
+			"45": "_",
+			"61": "+",
+			"91": "{",
+			"93": "}",
+			"92": "|",
+			"59": ":",
+			"39": "\"",
+			"44": "<",
+			"46": ">",
+			"47": "?"
+		};
+
+		if (characterCode in _to_ascii) {
+			characterCode = _to_ascii[characterCode];
+		}
+
+		var character;
+
+		if (!isShiftKey && (characterCode >= 65 && characterCode <= 90)) {
+			character = String.fromCharCode(characterCode + 32);
+		} else if (isShiftKey && shiftUps.hasOwnProperty(characterCode)) {
+			character = shiftUps[characterCode];
+		} else {
+			character = String.fromCharCode(characterCode);
+		}
+
+		return character;
+	}
 
 	// Config
 	var defaultConfig = {
@@ -118,8 +201,8 @@ $(document).ready(function() {
 			var label = $active.html();
 
 			html += '<div class="select-active"';
-			html += 'data-value="'+ value + '"';
-			html += 'data-label="'+ label +'">';
+			html += ' data-value="'+ escapeMarkup(value) + '"';
+			html += ' data-label="'+ escapeMarkup(label) +'">';
 			html += (config.beforeActive || '');
 			html += label + '</div>';
 
@@ -134,12 +217,11 @@ $(document).ready(function() {
 				var $option = $(option);
 				var value = $option.attr('value');
 
-				// TODO: Escape quotes when in the data-label tag
 				var label = $option.html();
 				var labelSlug = label.trim().toLowerCase();
 				ctx.labels.push(labelSlug);
-				html += '<li class="select-option" data-value="'+ value +'" data-label="'+ label +'"';
-				html += ' data-label-slug="' + labelSlug + '">' + label + '</li>';
+				html += '<li class="select-option" data-value="'+ escapeMarkup(value) +'" data-label="'+ escapeMarkup(label) +'"';
+				html += ' data-label-slug="' + escapeMarkup(labelSlug) + '">' + label + '</li>';
 			});
 
 			html += '</ul>';
@@ -308,7 +390,10 @@ $(document).ready(function() {
 			window.clearTimeout(ctx.updateAndCloseTimeout);
 
 			ctx.search_term = ctx.search_term || '';
-			ctx.search_term += String.fromCharCode(e.keyCode).toLowerCase();
+			var character = mapKeyPressToActualCharacter(e.shiftKey, e.keyCode);
+			if(character != null && character != false) {
+				ctx.search_term += (character + '').toLowerCase();
+			}
 
 			// Do a new search
 			debounce(function() {
@@ -388,10 +473,15 @@ $(document).ready(function() {
 	// If there is a matching term, focus on it
 	function selectSearch(ctx) {
 		var searchTerm = ctx.search_term.trim();
+		// You shouldn't need to search for escaped and non-escaped, but you do..
+		// some things like > will match when escaped, but double quotes will only
+		// match when unescaped
 		var match = ctx.$options
-									 .find('> li[data-label-slug^="' + searchTerm + '"]')
+									 .find(
+									 	'> li[data-label-slug^="' + escapeMarkup(searchTerm) + '"],\
+									 	 > li[data-label-slug^="' + searchTerm + '"]'
+									 )
 									 .first();
-
 		if(match.length) {
 			// Update the hover state to the new LI
 			selectUpdateHover(ctx,match);
